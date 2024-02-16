@@ -1,34 +1,11 @@
 import os
 from openai import OpenAI
-from langchain_openai import ChatOpenAI
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate
-)
-from langchain.schema import SystemMessage, HumanMessage
 
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv()) # read local .env file
 
-
+# Raw OpenAI client
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
-
-chat = ChatOpenAI(temperature=0)
-
-# messages
-messages = [
-    SystemMessage(
-        content="You are a helpful assistant that translates English to French."
-    ),
-    HumanMessage(
-        content="Translate this sentence from English to French. I love programming."
-    ),
-]
-
-response = chat.invoke(messages)
-
-print(response)
 
 #
 # account for deprecation of LLM model
@@ -50,13 +27,13 @@ else:
 
 def get_completion(prompt, model=llm_model):
     messages = [{"role": "user", "content": prompt}]
+
     response = client.chat.completions.create(model=model,
-    messages=messages,
-    temperature=0)
+        messages=messages,
+        temperature=0)
+
     return response.choices[0].message.content
 
 result = get_completion("What is 1+1?")
 
 print(result)
-
-
